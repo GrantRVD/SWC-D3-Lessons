@@ -4,3 +4,13 @@
 	font-size: 10px;
 	text-align: center;
 }
+
+.description
+{
+	text-align: left;
+	color: darkgray;
+	font-size: 15px;
+	width: 10em;
+	padding: 2em;
+	border: 1em;
+}
