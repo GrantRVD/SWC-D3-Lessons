@@ -21,3 +21,16 @@
 	position: relative;
 	left: 20px;
 }
+
+.chart
+{
+	width: 100px;
+	height: 100px;
+}
+
+.circ1
+{
+	stroke: green;
+	fill: white;
+	stroke-width: 5;
+}
