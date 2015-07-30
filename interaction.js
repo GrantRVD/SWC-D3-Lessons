@@ -30,7 +30,13 @@ var cat_object = {
 	name: "Princess Caroline"
 };
 
-cat_object.height = 10
+cat_object.height = 10;
 
 var cat_list = [cat_object];
 cat_list.push({weight: 5, past_weight_values: [5.9, 5.3, 6.1], name: "Snowball"});
+
+cat_list.push({past_weight_values: [3.9, 4.5, 4.3]});
+
+// Modify attributes of cat_object via the list to show passing by reference
+var cat_list2 = [cat_object, cat_object];
+cat_list2[0].name = "Mad Dog";
