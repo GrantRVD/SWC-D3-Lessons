@@ -52,9 +52,9 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 	var data_canvas = canvas.append("g").attr("class", "data_canvas");
 	var dot = data_canvas.selectAll(".dot").data(nations, function(d) {return d.name});
 	dot.enter().append("circle").attr("class","dot")
-		.attr("cx", function(d) { return xScale(d.income.pop()[1]); }) 
-		.attr("cy", function(d) { return yScale(d.lifeExpectancy.pop()[1]); })
-		.attr("r", function(d) { return rScale(d.population.pop()[1]); });
+		.attr("cx", function(d) { return xScale(d.income[d.income.length-1][1]); }) 
+		.attr("cy", function(d) { return yScale(d.lifeExpectancy[d.lifeExpectancy.length-1][1]); })
+		.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); });
 });
 
 // Some mucking about with circles and DOM
