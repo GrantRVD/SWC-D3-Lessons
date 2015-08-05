@@ -55,6 +55,15 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		.attr("cx", function(d) { return xScale(d.income[d.income.length-1][1]); }) 
 		.attr("cy", function(d) { return yScale(d.lifeExpectancy[d.lifeExpectancy.length-1][1]); })
 		.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); });
+
+	var filtered_nations = nations.filter(function(nation){ 
+    	return nation.population[nation.population.length-1][1] > 10000000; });
+
+	// Create variable just for Sub-Saharan Africa
+	var ssAfrica = nations.filter(function(nation) {
+		return nation.name === "Sub-Saharan Africa"; });
+
+	
 });
 
 // Some mucking about with circles and DOM
