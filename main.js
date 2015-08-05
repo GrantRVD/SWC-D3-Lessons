@@ -43,6 +43,13 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		.attr("class", "y axis")
 		.call(yAxis);
 
+	// Start adding some data
+	var data_canvas = canvas.append("g").attr("class", "data_canvas");
+	var dot = data_canvas.selectAll(".dot").data(nations, function(d) {return d.name});
+	dot.enter().append("circle").attr("class","dot")
+		.attr("cx", function(d) { return xScale(d.income.pop()); }) 
+		.attr("cy", function(d) { return yScale(d.lifeExpectancy.pop()); })
+		.attr("r", 5);
 });
 
 // Some mucking about with circles and DOM
