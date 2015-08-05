@@ -28,6 +28,11 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		.domain([10, 85])
 		.range([canvas_height, 0]);
 
+	// Create sqrt scale for population
+	var rScale = d3.scale.sqrt()
+		.domain([0, 5e8])
+		.range([0, 40]);
+
 	// Create the x & y axes
 	var xAxis = d3.svg.axis().orient("bottom").scale(xScale);
 	var yAxis = d3.svg.axis().orient("left").scale(yScale);
@@ -49,7 +54,7 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 	dot.enter().append("circle").attr("class","dot")
 		.attr("cx", function(d) { return xScale(d.income.pop()[1]); }) 
 		.attr("cy", function(d) { return yScale(d.lifeExpectancy.pop()[1]); })
-		.attr("r", 5);
+		.attr("r", function(d) { return rScale(d.population.pop()[1]); });
 });
 
 // Some mucking about with circles and DOM
