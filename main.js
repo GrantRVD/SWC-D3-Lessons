@@ -17,6 +17,11 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 
 	// Shift the cnavas and make it slightly smaller
 	canvas.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	// Create logarithmic scale for income
+	var xScale = d3.scale.log(); // income
+	xScale.domain([250, 1e5]); // set minimum and maximum
+	xScale.range([0, canvas_width]); // min and max range on page
 });
 
 // Some mucking about with circles and DOM
