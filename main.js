@@ -63,7 +63,16 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 	var ssAfrica = nations.filter(function(nation) {
 		return nation.name === "Sub-Saharan Africa"; });
 
-	
+	// Initialize filtered_nations to be all nations because all checkboxes are checked.
+	var filtered_nations = nations.map(function(nation) {return nation;});
+	// Add callback for checkboxes
+	d3.selectAll(".region_cb").on("change", function() {
+		var type = this.value;
+		if (this.checked) {
+			var new_nations = nations.filter(function() {return nation.region === type;});
+			filtered_nations = filtered_nations.concat(new_nations);
+		}
+	})
 });
 
 // Some mucking about with circles and DOM
