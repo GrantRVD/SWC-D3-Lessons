@@ -22,6 +22,27 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 	var xScale = d3.scale.log(); // income
 	xScale.domain([250, 1e5]); // set minimum and maximum
 	xScale.range([0, canvas_width]); // min and max range on page
+
+	// Create linear scale for lifespan
+	var yScale = d3.scale.linear()
+		.domain([10, 85])
+		.range([canvas_height, 0]);
+
+	// Create the x & y axes
+	var xAxis = d3.svg.axis().orient("bottom").scale(xScale);
+	var yAxis = d3.svg.axis().orient("left").scale(yScale);
+
+	// Push x-axis to the page
+	canvas.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + canvas_height + ")")
+		.call(xAxis);
+
+	// Push y-axis to the page
+	canvas.append("g")
+		.attr("class", "y axis")
+		.call(yAxis);
+
 });
 
 // Some mucking about with circles and DOM
