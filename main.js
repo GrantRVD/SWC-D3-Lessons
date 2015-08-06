@@ -65,12 +65,17 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 
 	// Initialize filtered_nations to be all nations because all checkboxes are checked.
 	var filtered_nations = nations.map(function(nation) {return nation;});
+
 	// Add callback for checkboxes
 	d3.selectAll(".region_cb").on("change", function() {
 		var type = this.value;
 		if (this.checked) {
 			var new_nations = nations.filter(function() {return nation.region === type;});
 			filtered_nations = filtered_nations.concat(new_nations);
+		}
+		else {
+			filtered_nations = filtered_nations.filter(function() {return nation.region != type:});
+			dot.exit().remove();
 		}
 	})
 });
