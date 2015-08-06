@@ -33,6 +33,9 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		.domain([0, 5e8])
 		.range([0, 40]);
 
+	// Create color scale for encoding region
+	var cScale = d3.scale.category20();
+
 	// Create the x & y axes
 	var xAxis = d3.svg.axis().orient("bottom").scale(xScale);
 	var yAxis = d3.svg.axis().orient("left").scale(yScale);
@@ -54,7 +57,8 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 	dot.enter().append("circle").attr("class","dot")
 		.attr("cx", function(d) { return xScale(d.income[d.income.length-1][1]); }) 
 		.attr("cy", function(d) { return yScale(d.lifeExpectancy[d.lifeExpectancy.length-1][1]); })
-		.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); });
+		.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); })
+		.attr("fill", function(d) { return cScale(d.region); });
 
 	var filtered_nations = nations.filter(function(nation){ 
     	return nation.population[nation.population.length-1][1] > 10000000; });
@@ -64,19 +68,20 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		return nation.name === "Sub-Saharan Africa"; });
 
 	// Initialize filtered_nations to be all nations because all checkboxes are checked.
-	var filtered_nations = nations.map(function(nation) {return nation;});
+	var filtered_nations = nations.map(function(nation) {return null;});
 
 	// Add callback for checkboxes
 	d3.selectAll(".region_cb").on("change", function() {
 		var type = this.value;
 		if (this.checked) {
-			var new_nations = nations.filter(function() {return nation.region === type;});
+			var new_nations = nations.filter(function(nation) {return nation.region === type;});
 			filtered_nations = filtered_nations.concat(new_nations);
 		}
 		else {
-			filtered_nations = filtered_nations.filter(function() {return nation.region != type:});
-			dot.exit().remove();
+			filtered_nations = filtered_nations.filter(function(nation) {return nation.region != type;});
 		}
+		dot.exit().remove();
+
 	})
 });
 
