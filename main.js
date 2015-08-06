@@ -53,22 +53,19 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 
 	// Start adding some data
 	var data_canvas = canvas.append("g").attr("class", "data_canvas");
-	var dot = data_canvas.selectAll(".dot").data(nations, function(d) {return d.name});
-	dot.enter().append("circle").attr("class","dot")
-		.attr("cx", function(d) { return xScale(d.income[d.income.length-1][1]); }) 
-		.attr("cy", function(d) { return yScale(d.lifeExpectancy[d.lifeExpectancy.length-1][1]); })
-		.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); })
-		.attr("fill", function(d) { return cScale(d.region); });
 
-	var filtered_nations = nations.filter(function(nation){ 
-    	return nation.population[nation.population.length-1][1] > 10000000; });
+	//var filtered_nations = nations.filter(function(nation){ 
+    //	return nation.population[nation.population.length-1][1] > 10000000; });
 
 	// Create variable just for Sub-Saharan Africa
 	var ssAfrica = nations.filter(function(nation) {
 		return nation.name === "Sub-Saharan Africa"; });
 
 	// Initialize filtered_nations to be all nations because all checkboxes are checked.
-	var filtered_nations = nations.map(function(nation) {return null;});
+	var filtered_nations = nations.map(function(nation) {return nation;});
+
+	// Populate the display for first time.
+	update();
 
 	// Add callback for checkboxes
 	d3.selectAll(".region_cb").on("change", function() {
@@ -80,9 +77,24 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		else {
 			filtered_nations = filtered_nations.filter(function(nation) {return nation.region != type;});
 		}
-		dot.exit().remove();
 
+		update();
 	})
+
+	// This function will update the display when called, based on what options the user selects.
+	function update() {
+		var dot = data_canvas.selectAll(".dot").data(filtered_nations, function(d) {return d.name});
+
+		// Add stuff the user wants.
+		dot.enter().append("circle").attr("class","dot")
+			.attr("cx", function(d) { return xScale(d.income[d.income.length-1][1]); }) 
+			.attr("cy", function(d) { return yScale(d.lifeExpectancy[d.lifeExpectancy.length-1][1]); })
+			.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); })
+			.attr("fill", function(d) { return cScale(d.region); });
+
+		// Remove stuff the user doesn't want.
+		dot.exit().remove();
+	}
 });
 
 // Some mucking about with circles and DOM
