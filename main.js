@@ -1,4 +1,4 @@
-d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
+d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/code/nations.json", function(nations) {
 	// Get the chart area in the HTML file
 	var chart = d3.select("#chart_area");
 	var svgFrame = chart.append("svg");
@@ -10,6 +10,9 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 	var frame_height = 350;
 	var canvas_width = frame_width - margin.left - margin.right;
 	var canvas_height = frame_height - margin.top - margin.bottom;
+
+	// Keep an index corresponding to the year of data currently displayed
+	var year_idx = parseInt(document.getElementById("year_slider").value)-1950;
 
 	// Apply settings to elements
 	svgFrame.attr("width", frame_width);
@@ -81,19 +84,27 @@ d3.json("http://bost.ocks.org/mike/nations/nations.json", function(nations) {
 		update();
 	})
 
+	d3.select("#year_slider").on("input", function() {
+		year_idx = parseInt(this.value) - 1950;
+		update();
+	});
+
 	// This function will update the display when called, based on what options the user selects.
 	function update() {
 		var dot = data_canvas.selectAll(".dot").data(filtered_nations, function(d) {return d.name});
 
 		// Add stuff the user wants.
 		dot.enter().append("circle").attr("class","dot")
-			.attr("cx", function(d) { return xScale(d.income[d.income.length-1][1]); }) 
-			.attr("cy", function(d) { return yScale(d.lifeExpectancy[d.lifeExpectancy.length-1][1]); })
-			.attr("r", function(d) { return rScale(d.population[d.population.length-1][1]); })
 			.attr("fill", function(d) { return cScale(d.region); });
 
 		// Remove stuff the user doesn't want.
 		dot.exit().remove();
+
+		// Update data if year has changed
+		dot.transition().ease("linear").duration(200)
+			.attr("cx", function(d) { return xScale(d.income[year_idx]); }) 
+			.attr("cy", function(d) { return yScale(d.lifeExpectancy[year_idx]); })
+			.attr("r", function(d) { return rScale(d.population[year_idx]); });
 	}
 });
 
