@@ -73,6 +73,18 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 	// Initialize filtered_nations to be all nations because all checkboxes are checked.
 	var filtered_nations = nations.map(function(nation) {return nation;});
 
+	// Calculate the averages for each region.
+var region_names = ["Sub-Saharan Africa", "South Asia", "Middle East & North Africa", "America", "East Asia & Pacific", "Europe & Central Asia"];
+
+var region_data = [];
+for (var i in region_name) {
+	var filter_nations_by_regions = nations.filter(function(nation) {
+		return (nation.region. == region_names[i]);
+	});
+	region_data[i] = calc_mean(filtered_nations_by_regions);
+}
+
+var filtered_reg_nations = region_data.map(function(region) {return region;});
 	// Populate the display for first time.
 	update();
 
