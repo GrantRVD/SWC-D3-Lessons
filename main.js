@@ -43,6 +43,12 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 	var xAxis = d3.svg.axis().orient("bottom").scale(xScale);
 	var yAxis = d3.svg.axis().orient("left").scale(yScale);
 
+	// Add a D3 tooltip
+	var tooltip = d3.select("body")
+		.append("div")
+		.style("position", "absolute")
+		.style("visibility", "hidden");
+
 	// Push x-axis to the page
 	canvas.append("g")
 		.attr("class", "x axis")
@@ -95,16 +101,23 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 
 		// Add stuff the user wants.
 		dot.enter().append("circle").attr("class","dot")
-			.attr("fill", function(d) { return cScale(d.region); });
+			.attr("fill", function(d) {return cScale(d.region); })
+			.on("mouseover", function(d) {return tooltip
+				.style("visibility", "visible")
+				.text(d.name);})
+			.on("mousemove", function() {return tooltip
+				.style("top", (d3.event.pageY-10)+"px")
+				.style("left", (d3.event.pageX+10)+"px");})
+			.on("mouseout", function() {return tooltip.style("visibility", "hidden"); });
 
 		// Remove stuff the user doesn't want.
 		dot.exit().remove();
 
 		// Update data if year has changed
 		dot.transition().ease("linear").duration(200)
-			.attr("cx", function(d) { return xScale(d.income[year_idx]); }) 
-			.attr("cy", function(d) { return yScale(d.lifeExpectancy[year_idx]); })
-			.attr("r", function(d) { return rScale(d.population[year_idx]); });
+			.attr("cx", function(d) {return xScale(d.income[year_idx]); }) 
+			.attr("cy", function(d) {return yScale(d.lifeExpectancy[year_idx]); })
+			.attr("r", function(d) {return rScale(d.population[year_idx]); });
 	}
 });
 
