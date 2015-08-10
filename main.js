@@ -79,7 +79,7 @@ var region_names = ["Sub-Saharan Africa", "South Asia", "Middle East & North Afr
 var region_data = [];
 for (var i in region_name) {
 	var filter_nations_by_regions = nations.filter(function(nation) {
-		return (nation.region. == region_names[i]);
+		return (nation.region == region_names[i]);
 	});
 	region_data[i] = calc_mean(filtered_nations_by_regions);
 }
@@ -131,6 +131,39 @@ var filtered_reg_nations = region_data.map(function(region) {return region;});
 			.attr("cy", function(d) {return yScale(d.lifeExpectancy[year_idx]); })
 			.attr("r", function(d) {return rScale(d.population[year_idx]); });
 	}
+
+	// This function is to calculate the mean of a given region.
+	function calc_mean(region_data) {
+    var mean_income = [];
+    var mean_lifeExpectancy = [];
+
+    for (var year_idx2 in region_data[0].years) {
+        var sum_income = 0;
+        var sum_lifeExpectancy = 0;
+        var sum_population = 0;
+
+        for (var k in region_data) {
+            var kpop = region_data[k].population[year_idx2];
+            var kincome = region_data[k].income[year_idx2];
+            var klife = region_data[k].lifeExpectancy[year_idx2];
+            sum_income += kpop*kincome; 
+            sum_lifeExpectancy += kpop*klife;
+            sum_population += kpop;             
+        }
+
+        mean_income[year_idx2] = sum_income/sum_population;
+        mean_lifeExpectancy[year_idx2] = sum_lifeExpectancy/sum_population;
+    }
+    averageData = {
+        region: region_data[0].region,
+        years: region_data[0].years,
+        mean_income: mean_income,
+        mean_lifeExpectancy: mean_lifeExpectancy
+    };
+
+    return averageData;
+}
+
 });
 
 // Some mucking about with circles and DOM
