@@ -53,18 +53,31 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 	canvas.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + canvas_height + ")")
-		.call(xAxis);
+		.call(xAxis)
+			.append("text")
+			.attr("class", "x label")
+			.attr("text-anchor", "end")
+			.attr("x", canvas_width)
+			.attr("y", - 6)
+			.text("income per capita, inflation-adjusted (dollars)");
 
 	// Push y-axis to the page
 	canvas.append("g")
 		.attr("class", "y axis")
-		.call(yAxis);
+		.call(yAxis)
+			.append("text")
+			.attr("class", "y label")
+			.attr("text-anchor", "end")
+			.attr("y", 6)
+			.attr("dy", ".75em")
+			.attr("transform", "rotate(-90)")
+			.text("income per capita, inflation-adjusted (dollars)");
 
 	// Start adding some data
 	var data_canvas = canvas.append("g").attr("class", "data_canvas");
 
 	//var filtered_nations = nations.filter(function(nation){ 
-    //	return nation.population[nation.population.length-1][1] > 10000000; });
+	//	return nation.population[nation.population.length-1][1] > 10000000; });
 
 	// Create variable just for Sub-Saharan Africa
 	var ssAfrica = nations.filter(function(nation) {
@@ -88,7 +101,7 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 		year_idx = parseInt(this.value) - 1950;
 		update();
 	});
-	
+
 	// Populate the display for first time.
 	update();
 
@@ -141,49 +154,54 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 			.attr("class","cross")
 			.attr("fill", function(d) {return cScale(d.region); })
 			.attr("stroke", "black")
-			.attr("d", d3.svg.symbol().type("cross"));
-
 		cross.exit().remove();
 
-		cross.transition().attr("transform", function(d) {return "translate(" + xScale(d.mean_income[year_idx]) + "," + yScale(d.mean_lifeExpectancy[year_idx]) + ")"; });
+		// Position will encode averages, size will encode regional total population.
+		cross.transition().ease("linear").duration(200)
+			.attr("transform", function(d) {return "translate(" + xScale(d.mean_income[year_idx]) + "," + yScale(d.mean_lifeExpectancy[year_idx]) + ")"; })
+			.attr("d", d3.svg.symbol().type("cross").size(function(d) {return rScale(d.total_population[year_idx]);}));
+
 
 	}
 
 	// This function is to calculate the mean of a given region.
 	function calc_mean(region_data) {
-    var mean_income = [];
-    var mean_lifeExpectancy = [];
+	var mean_income = [];
+	var mean_lifeExpectancy = [];
+	var total_population = [];
 
-    for (var year_idx2 in region_data[0].years) {
-        var sum_income = 0;
-        var sum_lifeExpectancy = 0;
-        var sum_population = 0;
+	for (var year_idx2 in region_data[0].years) {
+		var sum_income = 0;
+		var sum_lifeExpectancy = 0;
+		var sum_population = 0;
 
-        for (var k in region_data) {
-            var kpop = region_data[k].population[year_idx2];
-            var kincome = region_data[k].income[year_idx2];
-            var klife = region_data[k].lifeExpectancy[year_idx2];
-            sum_income += kpop*kincome; 
-            sum_lifeExpectancy += kpop*klife;
-            sum_population += kpop;             
-        }
+		for (var k in region_data) {
+			var kpop = region_data[k].population[year_idx2];
+			var kincome = region_data[k].income[year_idx2];
+			var klife = region_data[k].lifeExpectancy[year_idx2];
+			sum_income += kpop*kincome; 
+			sum_lifeExpectancy += kpop*klife;
+			sum_population += kpop;             
+		}
 
-        mean_income[year_idx2] = sum_income/sum_population;
-        mean_lifeExpectancy[year_idx2] = sum_lifeExpectancy/sum_population;
-    }
-    averageData = {
-        region: region_data[0].region,
-        years: region_data[0].years,
-        mean_income: mean_income,
-        mean_lifeExpectancy: mean_lifeExpectancy
-    };
+		mean_income[year_idx2] = sum_income/sum_population;
+		mean_lifeExpectancy[year_idx2] = sum_lifeExpectancy/sum_population;
+		total_population[year_idx2] = sum_population;
+	}
+	averageData = {
+		region: region_data[0].region,
+		years: region_data[0].years,
+		mean_income: mean_income,
+		mean_lifeExpectancy: mean_lifeExpectancy,
+		total_population: total_population
+	};
 
-    return averageData;
+	return averageData;
 }
 
 });
 
 // Some mucking about with circles and DOM
-var circFrame = d3.select("#practice");
-var circ = circFrame.append("circle");
-circ.style({"r": 40, "fill": "green", "stroke": "black", "cx": 40, "cy": 40});
+//var circFrame = d3.select("#practice");
+//var circ = circFrame.append("circle");
+//circ.style({"r": 40, "fill": "green", "stroke": "black", "cx": 40, "cy": 40});
