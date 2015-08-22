@@ -1,4 +1,4 @@
-d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/code/nations.json", function(nations) {
+d3.json("./nations.json", function(nations) {
 	// Get the chart area in the HTML file
 	var chart = d3.select("#chart_area");
 	var svgFrame = chart.append("svg");
