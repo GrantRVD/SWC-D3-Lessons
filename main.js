@@ -73,18 +73,16 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 	// Initialize filtered_nations to be all nations because all checkboxes are checked.
 	var filtered_nations = nations.map(function(nation) {return nation;});
 
-	// Calculate the averages for each region.
-var region_names = ["Sub-Saharan Africa", "South Asia", "Middle East & North Africa", "America", "East Asia & Pacific", "Europe & Central Asia"];
-
-var region_data = [];
-for (var i in region_name) {
-	var filter_nations_by_regions = nations.filter(function(nation) {
-		return (nation.region == region_names[i]);
-	});
-	region_data[i] = calc_mean(filtered_nations_by_regions);
-}
-
-var filtered_reg_nations = region_data.map(function(region) {return region;});
+	// Variables for calculating and storing the averages for each region.
+	var region_names = ["Sub-Saharan Africa", "South Asia", "Middle East & North Africa", "America", "East Asia & Pacific", "Europe & Central Asia"];
+	var region_data = [];
+	for (var i in region_names) {
+		var filtered_nations_by_regions = nations.filter(function(nation) {
+			return (nation.region == region_names[i]);
+		});
+		region_data[i] = calc_mean(filtered_nations_by_regions);
+	}
+	
 	// Populate the display for first time.
 	update();
 
@@ -116,6 +114,7 @@ var filtered_reg_nations = region_data.map(function(region) {return region;});
 			.attr("fill", function(d) {return cScale(d.region); })
 			.on("mouseover", function(d) {return tooltip
 				.style("visibility", "visible")
+				.style("font-family", "verdana")
 				.text(d.name);})
 			.on("mousemove", function() {return tooltip
 				.style("top", (d3.event.pageY-10)+"px")
@@ -130,6 +129,37 @@ var filtered_reg_nations = region_data.map(function(region) {return region;});
 			.attr("cx", function(d) {return xScale(d.income[year_idx]); }) 
 			.attr("cy", function(d) {return yScale(d.lifeExpectancy[year_idx]); })
 			.attr("r", function(d) {return rScale(d.population[year_idx]); });
+
+		// Below here is code to add crosses for regional averages.
+		var filtered_reg_nations = region_data.map(function(region) {return region;});
+		var cross = data_canvas.selectAll(".cross").data(region_data, function(d) {return d.region});
+
+		// To make the crosses, we'll create two rectangles, with a horizontally
+		// wide rectangle centered on average income and vertically long
+		// rectangle centered on average life expectancy
+
+		// Horizontal part of crosses
+		cross.enter().append("rect").attr("class","hwhisk cross") // horizontal
+			.attr("fill", function(d) {return cScale(d.region); })
+			.attr("width", 20)
+			.attr("height", 4)
+			.attr("x", function(d) {return xScale(d.mean_income[year_idx]) - 10;})
+			.attr("y", function(d) {return yScale(d.mean_lifeExpectancy[year_idx]) - 2;})
+			.attr("rx", 2) // Some rounded corners for style
+			.attr("ry", 2);
+
+		// Vertical part of crosses
+		cross.enter().append("rect").attr("class","vwhisk cross") // vertical
+			.attr("fill", function(d) {return cScale(d.region); })
+			.attr("width", 4)
+			.attr("height", 20)
+			.attr("x", function(d) {return xScale(d.mean_income[year_idx]) - 2;})
+			.attr("y", function(d) {return yScale(d.mean_lifeExpectancy[year_idx]) - 10;})
+			.attr("rx", 2) // Some rounded corners for style
+			.attr("ry", 2);
+
+		cross.exit().remove();
+
 	}
 
 	// This function is to calculate the mean of a given region.
