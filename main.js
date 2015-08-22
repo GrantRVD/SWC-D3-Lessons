@@ -99,23 +99,30 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 
 	d3.select("#year_slider").on("input", function() {
 		year_idx = parseInt(this.value) - 1950;
+		d3.select("#year_display").attr("value", this.value);
 		update();
 	});
 
 	// Populate the display for first time.
 	update();
 
+	d3.selectAll("label").attr("style", function() {return "background-color:" + cScale(this.children[0].value) + ";";});
+
 	// Add callback for checkboxes
-	d3.selectAll(".region_cb").on("change", function() {
+	d3.selectAll(".region_cb")
+		.on("change", function() {
 		var type = this.value;
 		if (this.checked) {
 			var new_nations = nations.filter(function(nation) {return nation.region === type;});
 			filtered_nations = filtered_nations.concat(new_nations);
 			filtered_reg_nations = filtered_reg_nations.concat(region_data.filter(function(avg) {return avg.region == type;}));
+			this.parentNode.style.backgroundColor = cScale(this.value);
+;	
 		}
 		else {
 			filtered_nations = filtered_nations.filter(function(nation) {return nation.region != type;});
 			filtered_reg_nations = filtered_reg_nations.filter(function(nation) {return nation.region != type;});
+			this.parentNode.style.backgroundColor = "transparent";
 		}
 
 		update();

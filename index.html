@@ -36,7 +36,10 @@
 			Europe & Central Asia
 		</label><br>
 
-		<input type="range" name="range" class="slider" id="year_slider" value="1979" min="1950" max="2008" step="1" ><br>
+		<div>
+		<input type="range" name="range" class="slider" id="year_slider" value="1979" min="1950" max="2008" step="1"/>
+		<input type="text" id="year_display" readonly="readonly" style="width: 30px;" value="1979"/>
+		</div>
 		
 		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 		<script type="text/javascript" src="main.js"></script>

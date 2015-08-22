@@ -3,6 +3,10 @@ text {
   font: 10px sans-serif;
 }
 
+h1 {
+  font-family: "Verdana";
+}
+
 .axis path, .axis line {
   fill: none;
   stroke: #000;
