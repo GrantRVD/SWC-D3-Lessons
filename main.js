@@ -82,6 +82,12 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 		});
 		region_data[i] = calc_mean(filtered_nations_by_regions);
 	}
+	var filtered_reg_nations = region_data.map(function(region) {return region;});
+
+	d3.select("#year_slider").on("input", function() {
+		year_idx = parseInt(this.value) - 1950;
+		update();
+	});
 	
 	// Populate the display for first time.
 	update();
@@ -92,18 +98,15 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 		if (this.checked) {
 			var new_nations = nations.filter(function(nation) {return nation.region === type;});
 			filtered_nations = filtered_nations.concat(new_nations);
+			filtered_reg_nations = filtered_reg_nations.concat(region_data.filter(function(avg) {return avg.region == type;}));
 		}
 		else {
 			filtered_nations = filtered_nations.filter(function(nation) {return nation.region != type;});
+			filtered_reg_nations = filtered_reg_nations.filter(function(nation) {return nation.region != type;});
 		}
 
 		update();
 	})
-
-	d3.select("#year_slider").on("input", function() {
-		year_idx = parseInt(this.value) - 1950;
-		update();
-	});
 
 	// This function will update the display when called, based on what options the user selects.
 	function update() {
@@ -112,6 +115,7 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 		// Add stuff the user wants.
 		dot.enter().append("circle").attr("class","dot")
 			.attr("fill", function(d) {return cScale(d.region); })
+			.attr("stroke", "gray")
 			.on("mouseover", function(d) {return tooltip
 				.style("visibility", "visible")
 				.style("font-family", "verdana")
@@ -131,34 +135,17 @@ d3.json("https://raw.githubusercontent.com/IsaKiko/D3-visualising-data/gh-pages/
 			.attr("r", function(d) {return rScale(d.population[year_idx]); });
 
 		// Below here is code to add crosses for regional averages.
-		var filtered_reg_nations = region_data.map(function(region) {return region;});
-		var cross = data_canvas.selectAll(".cross").data(region_data, function(d) {return d.region});
+		var cross = data_canvas.selectAll(".cross").data(filtered_reg_nations, function(d) {return d.region});
 
-		// To make the crosses, we'll create two rectangles, with a horizontally
-		// wide rectangle centered on average income and vertically long
-		// rectangle centered on average life expectancy
-
-		// Horizontal part of crosses
-		cross.enter().append("rect").attr("class","hwhisk cross") // horizontal
+		cross.enter().append("path")
+			.attr("class","cross")
 			.attr("fill", function(d) {return cScale(d.region); })
-			.attr("width", 20)
-			.attr("height", 4)
-			.attr("x", function(d) {return xScale(d.mean_income[year_idx]) - 10;})
-			.attr("y", function(d) {return yScale(d.mean_lifeExpectancy[year_idx]) - 2;})
-			.attr("rx", 2) // Some rounded corners for style
-			.attr("ry", 2);
-
-		// Vertical part of crosses
-		cross.enter().append("rect").attr("class","vwhisk cross") // vertical
-			.attr("fill", function(d) {return cScale(d.region); })
-			.attr("width", 4)
-			.attr("height", 20)
-			.attr("x", function(d) {return xScale(d.mean_income[year_idx]) - 2;})
-			.attr("y", function(d) {return yScale(d.mean_lifeExpectancy[year_idx]) - 10;})
-			.attr("rx", 2) // Some rounded corners for style
-			.attr("ry", 2);
+			.attr("stroke", "black")
+			.attr("d", d3.svg.symbol().type("cross"));
 
 		cross.exit().remove();
+
+		cross.transition().attr("transform", function(d) {return "translate(" + xScale(d.mean_income[year_idx]) + "," + yScale(d.mean_lifeExpectancy[year_idx]) + ")"; });
 
 	}
 
